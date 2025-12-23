@@ -9,13 +9,17 @@ import pin.company.ui.AdminMenu;
 import java.util.Scanner;
 
 public class Main {
-    private final AppState state;
-    private final Scanner scanner;
-    private final FileService fileService;
-    private final LoginScreen loginScreen;
-    private final UserMenu userMenu;
-    private final AdminMenu adminMenu;
+    private final AppState state;          // Хранит текущее состояние приложения (пользователи, сотрудники, текущая роль)
+    private final Scanner scanner;         // Сканер для ввода данных с консоли
+    private final FileService fileService; // Сервис для работы с файлами (загрузка/сохранение данных)
+    private final LoginScreen loginScreen; // Экран авторизации
+    private final UserMenu userMenu;       // Меню для обычного пользователя
+    private final AdminMenu adminMenu;     // Меню для администратора
 
+    /**
+     * Конструктор приложения.
+     * Инициализирует состояние, сканер и все экраны/меню.
+     */
     public Main() {
         this.state = new AppState();
         this.scanner = new Scanner(System.in);
@@ -33,35 +37,36 @@ public class Main {
         boolean employeesLoaded = fileService.loadEmployees(state);
 
         if (!usersLoaded) {
-            fileService.createDefaultAdmin(state);
+            fileService.createDefaultAdmin(state); // создаём дефолтного админа
             usersLoaded = fileService.loadUsers(state);
         }
 
         if (!employeesLoaded) {
-            fileService.createEmptyEmployeesFile(state);
+            fileService.createEmptyEmployeesFile(state); // создаём пустой файл сотрудников
             employeesLoaded = fileService.loadEmployees(state);
         }
 
         return usersLoaded && employeesLoaded;
     }
 
-    public void run() {
+
+    public void run() { // основной цикл программы
         if (!initializeData()) {
             System.out.println("Не удалось инициализировать данные");
             return;
         }
 
         while (true) {
-            loginScreen.showLoginScreen();
+            loginScreen.showLoginScreen(); // экран авторизации
 
-            if (state.currentUserId == -1) {
+            if (state.currentUserId == -1) { // если пользователь не вошёл
                 break;
             }
 
             if (state.currentUserRole == pin.company.model.UserRole.ROLE_ADMIN) {
-                adminMenu.showAdminMenu();
+                adminMenu.showAdminMenu(); // меню администратора
             } else {
-                userMenu.showUserMenu();
+                userMenu.showUserMenu();   // меню пользователя
             }
         }
 

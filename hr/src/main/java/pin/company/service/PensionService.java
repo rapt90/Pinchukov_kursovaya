@@ -1,20 +1,22 @@
 package pin.company.service;
 
-import pin.company.model.Employee;
-import pin.company.utils.DateUtils;
+import pin.company.model.Employee; // модель сотрудника
+import pin.company.utils.DateUtils; // утилита для работы с датами
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Calendar; // класс для работы с календарными датами
+import java.util.Date;     // класс для представления даты
 import java.util.List;
 
 public class PensionService {
     private static final int RETIREMENT_AGE = 65;
-    private final ValidationService validationService;
+    private final ValidationService validationService; // сервис для проверки и парсинга дат
 
+    // Конструктор, принимает сервис валидации
     public PensionService(ValidationService validationService) {
         this.validationService = validationService;
     }
 
+    // Метод для отображения сотрудников пенсионного возраста
     public void displayPensioners(List<Employee> employees) {
         if (employees.isEmpty()) {
             System.out.println("Нет сотрудников для проверки");
@@ -22,37 +24,40 @@ public class PensionService {
         }
 
         try {
-            Calendar nowCal = Calendar.getInstance();
-            Date currentDate = nowCal.getTime();
+            Calendar nowCal = Calendar.getInstance(); // текущая дата/время
+            Date currentDate = nowCal.getTime();      // преобразуем в объект Date
 
             System.out.println("\n=== Список сотрудников пенсионного возраста (65+) ===\n");
-            System.out.println("Дата проверки: " + DateUtils.formatDate(currentDate));
+            System.out.println("Дата проверки: " + DateUtils.formatDate(currentDate)); // выводим дату проверки
             System.out.println();
 
-            boolean hasPensioners = false;
-            int pensionerCount = 0;
+            boolean hasPensioners = false; // флаг, есть ли пенсионеры
+            int pensionerCount = 0;        // счётчик пенсионеров
 
+            // перебираем всех сотрудников
             for (int i = 0; i < employees.size(); i++) {
                 Employee employee = employees.get(i);
-                Date birthDate = validationService.parseDate(employee.birthDate);
+                Date birthDate = validationService.parseDate(employee.birthDate); // парсим дату рождения
 
                 if (birthDate != null) {
-                    int ageInYears = calculateExactAge(birthDate, currentDate);
+                    int ageInYears = calculateExactAge(birthDate, currentDate); // считаем возраст
 
+                    // если возраст >= пенсионного
                     if (ageInYears >= RETIREMENT_AGE) {
                         pensionerCount++;
                         hasPensioners = true;
 
-                        // Рассчитываем дату выхода на пенсию (65 лет)
+                        // рассчитываем дату выхода на пенсию (65 лет от даты рождения)
                         Calendar retirementCal = Calendar.getInstance();
                         retirementCal.setTime(birthDate);
                         retirementCal.add(Calendar.YEAR, RETIREMENT_AGE);
                         Date retirementDate = retirementCal.getTime();
 
-                        // Проверяем, уже на пенсии или скоро выйдет
+                        // определяем статус: уже на пенсии или выйдет позже
                         String pensionStatus = retirementDate.before(currentDate)
                                 ? "Уже на пенсии"
                                 : "Выйдет на пенсию: " + DateUtils.formatDate(retirementDate);
+
 
                         System.out.println(pensionerCount + ". " + employee.fullNameEmployee);
                         System.out.println("   Должность: " + employee.post);
@@ -61,7 +66,7 @@ public class PensionService {
                         System.out.println("   Возраст: " + ageInYears + " лет");
                         System.out.println("   Статус: " + pensionStatus);
 
-                        // Если уже на пенсии, показываем сколько лет на пенсии
+                        // если уже на пенсии — считаем сколько лет на пенсии
                         if (retirementDate.before(currentDate)) {
                             int pensionYears = calculateExactAge(retirementDate, currentDate);
                             System.out.println("   На пенсии: " + pensionYears + " лет");
@@ -78,7 +83,6 @@ public class PensionService {
             } else {
                 System.out.println("Всего сотрудников пенсионного возраста: " + pensionerCount);
 
-                // Дополнительная статистика
                 System.out.println("\n=== Статистика ===");
                 System.out.println("Всего сотрудников в системе: " + employees.size());
                 System.out.println("Процент пенсионеров: " +
@@ -86,26 +90,27 @@ public class PensionService {
             }
 
         } catch (Exception e) {
+            // обработка ошибок
             System.out.println("Ошибка при обработке данных: " + e.getMessage());
         }
     }
 
-    // Точный расчёт возраста через Calendar
+    // Вспомогательный метод: точный расчёт возраста через Calendar
     private int calculateExactAge(Date birthDate, Date currentDate) {
         Calendar birthCal = Calendar.getInstance();
-        birthCal.setTime(birthDate);
+        birthCal.setTime(birthDate); // устанавливаем дату рождения
         Calendar nowCal = Calendar.getInstance();
-        nowCal.setTime(currentDate);
+        nowCal.setTime(currentDate); // устанавливаем текущую дату
 
-        int age = nowCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
+        int age = nowCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR); // разница по годам
 
-        // Если день рождения ещё не наступил в этом году, уменьшаем возраст
+        // если день рождения ещё не наступил в этом году — уменьшаем возраст на 1
         if (nowCal.get(Calendar.MONTH) < birthCal.get(Calendar.MONTH) ||
                 (nowCal.get(Calendar.MONTH) == birthCal.get(Calendar.MONTH) &&
                         nowCal.get(Calendar.DAY_OF_MONTH) < birthCal.get(Calendar.DAY_OF_MONTH))) {
             age--;
         }
 
-        return age;
+        return age; // возвращаем рассчитанный возраст
     }
 }

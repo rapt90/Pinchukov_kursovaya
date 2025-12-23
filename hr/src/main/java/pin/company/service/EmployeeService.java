@@ -17,12 +17,14 @@ public class EmployeeService {
     private final ValidationService validationService;
     private final FileService fileService;
     private final SimpleDateFormat dateFormat;
+    private final PensionService pensionService;
 
     public EmployeeService(ValidationService validationService, FileService fileService) {
         this.validationService = validationService;
         this.fileService = fileService;
         this.dateFormat = new SimpleDateFormat(DATE_FORMAT);
         this.dateFormat.setLenient(false);
+        this.pensionService = new PensionService(validationService);
     }
 
     public void addEmployee(AppState state, Scanner scanner) {
@@ -396,77 +398,7 @@ public class EmployeeService {
     }
 
     public void displayPensioners(AppState state, Scanner scanner) {
-        if (state.employees.isEmpty()) {
-            System.out.println("Нет сотрудников для проверки");
-            ConsoleHelper.pressAnyKeyToContinue(scanner);
-            return;
-        }
-
-        try {
-            Calendar nowCal = Calendar.getInstance(); // Текущая дата
-            Date currentDate = nowCal.getTime();
-
-            System.out.println("\n=== Список сотрудников пенсионного возраста (65+) ===\n");
-            System.out.println("Дата проверки: " + dateFormat.format(currentDate));
-            System.out.println();
-
-            boolean hasPensioners = false;
-            int pensionerCount = 0;
-
-            for (int i = 0; i < state.employees.size(); i++) {
-                Employee employee = state.employees.get(i);
-                Date birthDate = validationService.parseDate(employee.birthDate);
-
-                if (birthDate != null) {
-                    int ageInYears = calculateExactAge(birthDate, currentDate);
-
-                    if (ageInYears >= 65) {
-                        pensionerCount++;
-                        hasPensioners = true;
-
-                        Calendar retirementCal = Calendar.getInstance();
-                        retirementCal.setTime(birthDate);
-                        retirementCal.add(Calendar.YEAR, 65);
-                        Date retirementDate = retirementCal.getTime();
-
-                        String pensionStatus = retirementDate.before(currentDate)
-                                ? "Уже на пенсии"
-                                : "Выйдет на пенсию: " + dateFormat.format(retirementDate);
-
-                        System.out.println(pensionerCount + ". " + employee.fullNameEmployee);
-                        System.out.println("   Должность: " + employee.post);
-                        System.out.println("   Отдел: " + employee.departmentName);
-                        System.out.println("   Дата рождения: " + employee.birthDate);
-                        System.out.println("   Возраст: " + ageInYears + " лет");
-                        System.out.println("   Статус: " + pensionStatus);
-
-                        if (retirementDate.before(currentDate)) {
-                            int pensionYears = calculateExactAge(retirementDate, currentDate);
-                            System.out.println("   На пенсии: " + pensionYears + " лет");
-                        }
-
-                        System.out.println("   Дата начала работы: " + employee.startDate);
-                        System.out.println();
-                    }
-                }
-            }
-
-            if (!hasPensioners) {
-                System.out.println("Сотрудников пенсионного возраста не найдено");
-            } else {
-                System.out.println("Всего сотрудников пенсионного возраста: " + pensionerCount);
-
-                System.out.println("\n=== Статистика ===");
-                System.out.println("Всего сотрудников в системе: " + state.employees.size());
-                System.out.println("Процент пенсионеров: " +
-                        String.format("%.1f", (pensionerCount * 100.0 / state.employees.size())) + "%");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Ошибка при обработке данных: " + e.getMessage());
-        }
-
-        scanner.nextLine();
+        pensionService.displayPensioners(state.employees);
         ConsoleHelper.pressAnyKeyToContinue(scanner);
     }
 

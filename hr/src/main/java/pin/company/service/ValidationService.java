@@ -11,22 +11,24 @@ public class ValidationService {
 
     private final java.text.SimpleDateFormat dateFormat;
 
+    // Конструктор: создаёт форматтер и запрещает "мягкий" парсинг (lenient = false)
     public ValidationService() {
         this.dateFormat = new java.text.SimpleDateFormat(DATE_FORMAT);
         this.dateFormat.setLenient(false);
     }
 
+    // Проверка корректности даты (строка должна строго соответствовать формату dd-MM-yyyy)
     public boolean isValidDate(String date) {
         if (date == null) {
-            return false;
+            return false; // null не является корректной датой
         }
 
         try {
-            java.util.Date parsedDate = dateFormat.parse(date);
-            String reformatted = dateFormat.format(parsedDate);
-            return reformatted.equals(date);
+            java.util.Date parsedDate = dateFormat.parse(date); // пробуем распарсить строку
+            String reformatted = dateFormat.format(parsedDate); // форматируем обратно
+            return reformatted.equals(date); // сравниваем с исходной строкой
         } catch (java.text.ParseException e) {
-            return false;
+            return false; // если парсинг не удался — дата некорректна
         }
     }
 
@@ -38,6 +40,7 @@ public class ValidationService {
         return password != null && !password.isEmpty() && password.length() <= MAX_PASSWORD_LENGTH;
     }
 
+    // Парсинг строки в объект Date. Если ошибка — возвращает null
     public java.util.Date parseDate(String dateStr) {
         try {
             return dateFormat.parse(dateStr);
@@ -46,35 +49,4 @@ public class ValidationService {
         }
     }
 
-    // Новый метод для проверки сложности пароля (опционально)
-    public boolean isPasswordStrong(String password) {
-        if (password == null || password.length() < 6) {
-            return false;
-        }
-
-        boolean hasLetter = false;
-        boolean hasDigit = false;
-
-        for (char c : password.toCharArray()) {
-            if (Character.isLetter(c)) hasLetter = true;
-            if (Character.isDigit(c)) hasDigit = true;
-        }
-
-        return hasLetter && hasDigit;
-    }
-
-    // Метод для проверки формата логина (только буквы и цифры)
-    public boolean isLoginFormatValid(String login) {
-        if (login == null || login.isEmpty()) {
-            return false;
-        }
-
-        for (char c : login.toCharArray()) {
-            if (!Character.isLetterOrDigit(c)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }

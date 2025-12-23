@@ -18,9 +18,9 @@ public class AdminMenu {
     private final UserService userService;
 
     public AdminMenu(AppState state, Scanner scanner, FileService fileService) {
-        this.state = state;
-        this.scanner = scanner;
-        ValidationService validationService = new ValidationService();
+        this.state = state; // сохраняем ссылку на текущее состояние
+        this.scanner = scanner; // сохраняем сканнер для дальнейшего ввода
+        ValidationService validationService = new ValidationService(); // создаём сервис валидации (проверка корректности данных, дат и т.п.)
         this.employeeService = new EmployeeService(validationService, fileService);
         this.userService = new UserService(validationService, fileService);
     }
