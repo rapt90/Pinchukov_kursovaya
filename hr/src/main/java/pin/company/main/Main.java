@@ -21,7 +21,7 @@ public class Main {
      * Инициализирует состояние, сканер и все экраны/меню.
      */
     public Main() {
-        this.state = new AppState();
+        this.state = new AppState(); // присваивает новосозданный объект AppState в поле state текущего объекта Main
         this.scanner = new Scanner(System.in);
         this.fileService = new FileService();
         this.loginScreen = new LoginScreen(state, scanner);

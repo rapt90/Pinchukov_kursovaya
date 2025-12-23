@@ -11,7 +11,7 @@ public class FileService {
     private static final String EMPLOYEES_FILE = "employees.dat";
     private static final String USERS_FILE = "users.dat";
 
-    @SuppressWarnings("unchecked") // подавляем предупреждение о приведении типов
+    @SuppressWarnings("unchecked") // убирает предупреждения компилятора при приведении типов.
     public boolean loadEmployees(AppState state) {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(EMPLOYEES_FILE))) {
             state.employees = (List<pin.company.model.Employee>) ois.readObject(); // десериализация списка сотрудников

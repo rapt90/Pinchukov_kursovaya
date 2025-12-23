@@ -1,14 +1,7 @@
 package pin.company.ui;
 
 import pin.company.model.AppState;
-import pin.company.model.Employee;
-import pin.company.model.User;
-import pin.company.model.UserRole;
 import pin.company.service.*;
-
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 import java.util.Scanner;
 
 public class AdminMenu {
@@ -120,7 +113,7 @@ public class AdminMenu {
 
             switch (userChoice) {
                 case 1:
-                    userService.displayUsersWithContinue(state, scanner);
+                    userService.displayUsers(state, scanner);
                     break;
                 case 2:
                     userService.addUser(state, scanner);

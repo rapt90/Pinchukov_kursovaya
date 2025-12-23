@@ -23,7 +23,7 @@ public class EmployeeService {
         this.validationService = validationService;
         this.fileService = fileService;
         this.dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        this.dateFormat.setLenient(false);
+        this.dateFormat.setLenient(false); // отключает мягкий парсинг
         this.pensionService = new PensionService(validationService);
     }
 
@@ -208,10 +208,10 @@ public class EmployeeService {
     }
 
     public void displayEmployees(AppState state, Scanner scanner) {
-        displayEmployees(state, state.employees, scanner);
+        displayEmployees(state.employees, scanner);
     }
 
-    public void displayEmployees(AppState state, List<Employee> list, Scanner scanner) {
+    public void displayEmployees(List<Employee> list, Scanner scanner) {
         if (list.isEmpty()) {
             System.out.println("Сотрудников не найдено");
             ConsoleHelper.pressAnyKeyToContinue(scanner);
@@ -406,7 +406,7 @@ public class EmployeeService {
     private List<Employee> getEmployees(AppState state, Date referenceDate) {
         List<Employee> sortedEmployees = new ArrayList<>(state.employees);
 
-        sortedEmployees.sort((e1, e2) -> {
+        sortedEmployees.sort((e1, e2) -> { // сравнение стажа сотрудников
             Date start1 = validationService.parseDate(e1.startDate);
             Date start2 = validationService.parseDate(e2.startDate);
 
@@ -422,20 +422,4 @@ public class EmployeeService {
         return sortedEmployees;
     }
 
-    private int calculateExactAge(Date birthDate, Date currentDate) {
-        Calendar birthCal = Calendar.getInstance();
-        birthCal.setTime(birthDate);
-        Calendar nowCal = Calendar.getInstance();
-        nowCal.setTime(currentDate);
-
-        int age = nowCal.get(Calendar.YEAR) - birthCal.get(Calendar.YEAR);
-
-        if (nowCal.get(Calendar.MONTH) < birthCal.get(Calendar.MONTH) ||
-                (nowCal.get(Calendar.MONTH) == birthCal.get(Calendar.MONTH) &&
-                        nowCal.get(Calendar.DAY_OF_MONTH) < birthCal.get(Calendar.DAY_OF_MONTH))) {
-            age--;
-        }
-
-        return age;
-    }
 }

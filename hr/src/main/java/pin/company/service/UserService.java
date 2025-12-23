@@ -8,7 +8,7 @@ import pin.company.ui.ConsoleHelper;
 import java.util.Scanner;
 
 public class UserService {
-    private static final int MAX_LOGIN_LENGTH = 20;
+    private static final int MAX_LOGIN_LENGTH = 30;
     private static final int MAX_PASSWORD_LENGTH = 15;
     private static final int MAX_USERS = 50;
 
@@ -24,17 +24,6 @@ public class UserService {
         return state.users.stream().noneMatch(user -> user.login.equals(login));
     }
 
-    public boolean verifyCredentials(AppState state, String login, String password) {
-        for (int i = 0; i < state.users.size(); i++) {
-            User user = state.users.get(i);
-            if (user.login.equals(login) && user.password.equals(password)) {
-                state.currentUserId = i;
-                state.currentUserRole = user.role;
-                return true;
-            }
-        }
-        return false;
-    }
 
     public void addUser(AppState state, Scanner scanner) {
         if (state.users.size() >= MAX_USERS) {
@@ -95,7 +84,7 @@ public class UserService {
             return;
         }
 
-        displayUsers(state);
+        displayUsers(state, scanner);
 
         System.out.print("\nВыберите пользователя для редактирования (0 чтобы выйти): ");
         int choice = scanner.nextInt();
@@ -179,7 +168,7 @@ public class UserService {
             return;
         }
 
-        displayUsers(state);
+        displayUsers(state, scanner);
 
         System.out.print("\nВыберите пользователя для удаления (0 чтобы выйти): ");
         int choice = scanner.nextInt();
@@ -221,9 +210,10 @@ public class UserService {
         ConsoleHelper.pressAnyKeyToContinue(scanner);
     }
 
-    public void displayUsers(AppState state) {
+    public void displayUsers(AppState state, Scanner scanner) {
         if (state.users.isEmpty()) {
             System.out.println("Пользователи не найдены");
+            ConsoleHelper.pressAnyKeyToContinue(scanner);
             return;
         }
 
@@ -244,14 +234,8 @@ public class UserService {
                 System.out.println("   (текущий пользователь)");
             }
         }
+        scanner.nextLine();
+        ConsoleHelper.pressAnyKeyToContinue(scanner);
     }
-
-    public void displayUsersWithContinue(AppState state, Scanner scanner) {
-        displayUsers(state);
-        if (!state.users.isEmpty()) {
-            ConsoleHelper.pressAnyKeyToContinue(scanner);
-        }
-    }
-
 
 }

@@ -11,7 +11,7 @@ public class User implements Serializable {
     public UserRole role;
 
     public User(String login, String password, UserRole role) {
-        this.login = login;
+        this.login = login; //присваивает знаение аргумента полю объекта
         this.password = password;
         this.role = role;
     }

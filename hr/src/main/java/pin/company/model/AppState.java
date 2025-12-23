@@ -15,7 +15,7 @@ public class AppState implements Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L; // идентификатор версии для сериализации
 
-    public List<Employee> employees = new ArrayList<>();
+    public List<Employee> employees = new ArrayList<>(); // список хранит объекты только типа employee
 
     public List<User> users = new ArrayList<>();
 

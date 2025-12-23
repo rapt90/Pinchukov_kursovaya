@@ -49,7 +49,7 @@ public class LoginScreen {
                 attempts++;
             }
             // проверка правильности логина и пароля
-            else if (verifyCredentials(login, password)) {
+            else if (validationService.verifyCredentials(state, login, password)) {
                 System.out.println("\nЛогин и пароль верны! Добро пожаловать, " + login + ".");
                 ConsoleHelper.pressAnyKeyToContinue(scanner);
                 return; // успешный вход — выходим из метода
@@ -71,18 +71,5 @@ public class LoginScreen {
         }
     }
 
-    // Метод проверки логина и пароля
-    private boolean verifyCredentials(String login, String password) {
-        // перебираем всех пользователей
-        for (int i = 0; i < state.users.size(); i++) {
-            pin.company.model.User user = state.users.get(i);
-            // если логин и пароль совпадают
-            if (user.login.equals(login) && user.password.equals(password)) {
-                state.currentUserId = i; // сохраняем ID текущего пользователя
-                state.currentUserRole = user.role; // сохраняем его роль
-                return true; // успешная авторизация
-            }
-        }
-        return false; // если совпадений нет
-    }
+
 }
