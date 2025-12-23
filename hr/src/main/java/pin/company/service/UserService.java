@@ -229,14 +229,17 @@ public class UserService {
 
         System.out.println("=== Список пользователей ===");
         System.out.println("Всего пользователей: " + state.users.size());
-        System.out.println("===========================\n");
 
         for (int i = 0; i < state.users.size(); i++) {
             User user = state.users.get(i);
             String roleText = user.role == UserRole.ROLE_ADMIN ? "Администратор" : "Пользователь";
-            System.out.printf("%d. %s - %s%n", i + 1, user.login, roleText);
 
-            // Если это текущий пользователь, отмечаем это
+            System.out.printf("%d. Логин: %s | Роль: %s | Пароль: %s%n",
+                    i + 1,
+                    user.login,
+                    roleText,
+                    user.password);
+
             if (i == state.currentUserId) {
                 System.out.println("   (текущий пользователь)");
             }

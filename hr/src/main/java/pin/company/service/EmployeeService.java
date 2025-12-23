@@ -280,16 +280,15 @@ public class EmployeeService {
             System.out.println("0. Выход из меню поиска");
             System.out.print("Выбор: ");
 
-            scanner.nextLine();
-            String choiceStr = scanner.nextLine().trim();
-            int choice;
-
-            try {
-                choice = Integer.parseInt(choiceStr);
-            } catch (NumberFormatException e) {
-                System.out.println("Ошибка: нужно ввести число от 0 до 3");
-                continue;
-            }
+                int choice;
+                try {
+                    choice = scanner.nextInt();
+                    scanner.nextLine(); // очистка буфера
+                } catch (InputMismatchException e) {
+                    System.out.println("Ошибка: нужно ввести число от 0 до 3");
+                    scanner.nextLine(); // очистка некорректного ввода
+                    continue;
+                }
 
             if (choice == 0) {
                 System.out.println("Выход из меню поиска...");
@@ -299,45 +298,40 @@ public class EmployeeService {
             List<Employee> results = new ArrayList<>();
 
             switch (choice) {
+
                 case 1:
                     System.out.print("Введите ФИО сотрудника для поиска: ");
                     String nameQuery = scanner.nextLine().trim().toLowerCase();
-                    if (!nameQuery.isEmpty()) {
-                        for (Employee s : state.employees) {
-                            if (s.fullNameEmployee != null && s.fullNameEmployee.toLowerCase().contains(nameQuery)) {
-                                results.add(s);
-                            }
+                    for (Employee e : state.employees) {
+                        if (e.fullNameEmployee != null && e.fullNameEmployee.toLowerCase().contains(nameQuery)) {
+                            results.add(e);
                         }
                     }
                     break;
 
                 case 2:
                     System.out.print("Введите должность сотрудника для поиска: ");
-                    String brandQuery = scanner.nextLine().trim().toLowerCase();
-                    if (!brandQuery.isEmpty()) {
-                        for (Employee s : state.employees) {
-                            if (s.post != null && s.post.toLowerCase().contains(brandQuery)) {
-                                results.add(s);
-                            }
+                    String postQuery = scanner.nextLine().trim().toLowerCase();
+                    for (Employee e : state.employees) {
+                        if (e.post != null && e.post.toLowerCase().contains(postQuery)) {
+                            results.add(e);
                         }
                     }
                     break;
 
                 case 3:
                     System.out.print("Введите название отдела для поиска: ");
-                    String statusQuery = scanner.nextLine().trim().toLowerCase();
-                    if (!statusQuery.isEmpty()) {
-                        for (Employee s : state.employees) {
-                            if (s.departmentName != null && s.departmentName.toLowerCase().contains(statusQuery)) {
-                                results.add(s);
-                            }
+                    String deptQuery = scanner.nextLine().trim().toLowerCase();
+                    for (Employee e : state.employees) {
+                        if (e.departmentName != null && e.departmentName.toLowerCase().contains(deptQuery)) {
+                            results.add(e);
                         }
                     }
                     break;
 
                 default:
                     System.out.println("Неверный выбор. Введите число от 0 до 3");
-                    break;
+                    continue;
             }
 
             if (results.isEmpty()) {
@@ -345,12 +339,20 @@ public class EmployeeService {
             } else {
                 System.out.println("\n=== РЕЗУЛЬТАТЫ ПОИСКА ===");
                 System.out.println("Найдено сотрудников: " + results.size());
-                displayEmployees(state, results, scanner);
+                for (int i = 0; i < results.size(); i++) {
+                    Employee e = results.get(i);
+                    System.out.println((i + 1) + ". " + e.fullNameEmployee);
+                    System.out.println("   Должность: " + e.post);
+                    System.out.println("   Название отдела: " + e.departmentName);
+                    System.out.println("   Дата рождения: " + e.birthDate);
+                    System.out.println("   Дата начала работы: " + e.startDate + "\n");
+                }
             }
 
             ConsoleHelper.pressAnyKeyToContinue(scanner);
         }
     }
+
 
     public void displayEmployeeExperience(AppState state, Scanner scanner) {
         if (state.employees.isEmpty()) {

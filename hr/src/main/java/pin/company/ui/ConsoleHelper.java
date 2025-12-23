@@ -11,9 +11,8 @@ public class ConsoleHelper {
 
     public static void pressAnyKeyToContinue(Scanner scanner) {
         System.out.println("\nНажмите Enter чтобы продолжить...");
-        if (scanner.hasNextLine()) {
             scanner.nextLine();
-        }
+
     }
 
     public static String getLimitedInput(Scanner scanner, String prompt, int maxLength) {
